@@ -1,4 +1,4 @@
-# Smooth Scroll
+# Smooth Scroll [![Build Status](https://travis-ci.org/cferdinandi/smooth-scroll.svg)](https://travis-ci.org/cferdinandi/smooth-scroll)
 A lightweight script to animate scrolling to anchor links.
 
 [Download Smooth Scroll 4](https://github.com/cferdinandi/smooth-scroll/archive/master.zip) / [View the demo](http://cferdinandi.github.io/smooth-scroll/)
@@ -19,10 +19,12 @@ A lightweight script to animate scrolling to anchor links.
 
 ## Getting Started
 
+Compiled and production-ready code can be found in the `dist` directory. The `src` directory contains development code. Unit tests are located in the `test` directory.
+
 ### 1. Include Smooth Scroll on your site.
 
 ```html
-<script src="js/smooth-scroll.js"></script>
+<script src="dist/js/smooth-scroll.js"></script>
 ```
 
 ### 2. Add the markup to your HTML.
@@ -53,7 +55,7 @@ You can install Smooth Scroll with your favorite package manager.
 
 * **[NPM](https://www.npmjs.org/):** `npm install cferdinandi/smooth-scroll`
 * **[Bower](http://bower.io/):** `bower install https://github.com/cferdinandi/smooth-scroll.git`
-* **[Component](http://component.io/):** `component install install cferdinandi/smooth-scroll`
+* **[Component](http://component.io/):** `component install cferdinandi/smooth-scroll`
 
 
 
@@ -200,6 +202,15 @@ Smooth Scroll is licensed under the [MIT License](http://gomakethings.com/mit/).
 
 
 ## Changelog
+
+* v4.8.0 - June 21, 2014
+	* Converted to gulp.js workflow.
+	* Added unit testing.
+	* Added minified versions of files.
+* v4.7.2 - June 19, 2014
+	* Fixed typo that broke scroll.
+* v4.7.1 - June 19, 2014
+	* Fixed factory/root/UMD definition.
 * v4.7.0 - June 7, 2014
 	* Added AMD support.
 	* Moved public APIs to `exports` variable.
