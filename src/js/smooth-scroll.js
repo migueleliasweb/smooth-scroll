@@ -178,6 +178,11 @@
 		}
 	};
         
+        /**
+         * Prevents the event to happen
+         * @param {Event} Event
+         * @returns {Void}
+         */
         var disableEvent = function (Event) { Event.preventDefault(); Event.returnValue = false; }
         
         /**
