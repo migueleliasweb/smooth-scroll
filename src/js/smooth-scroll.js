@@ -24,6 +24,9 @@
 		easing: 'easeInOutCubic',
 		offset: 0,
 		updateURL: false,
+                listenMouseWheel : false,
+                goToFirstElement : false,
+                canvasClass : 'canvas',
 		callbackBefore: function () {},
 		callbackAfter: function () {}
 	};
@@ -174,6 +177,131 @@
 			}, '', anchor );
 		}
 	};
+        
+        var disableEvent = function (Event) { Event.preventDefault(); Event.returnValue = false; }
+        
+        /**
+         * Returns the next element based on the "canvasClass" setting
+         * @param {Element} Element
+         * @returns {Element}
+         */
+        var getNextElement = function (Element) {
+            var objects = document.getElementsByClassName(settings.canvasClass);
+            var count = objects.length;
+            for (var i=0;i<count;i++) {
+                if (objects[i] == Element) {
+                    return objects[++i];
+                }
+            }
+        }
+        
+        /**
+         * Returns the previuous element based on the "canvasClass" setting
+         * @param {Element} Element
+         * @returns {Element}
+         */
+        var getPreviousElement = function (Element) {
+            var objects = document.getElementsByClassName(settings.canvasClass);
+            var count = objects.length;
+            for (var i=0;i<count;i++) {
+                if (objects[i] == Element) {
+                    return objects[--i];
+                }
+            }
+        }
+        
+        /**
+         * Handles swipe and mouse wheel events
+         * @param {Event} Event
+         * @returns {Void}
+         */
+        var eventHandler = function (Event) {
+            disableEvent(Event);
+
+            if (!exports.animation_running) {
+                var current_element = document.getElementById(window.location.hash.substring(1));
+                var element;
+
+                if (Event.direction == 'down') {
+                    element = getNextElement(current_element);
+                } else {
+                    element = getPreviousElement(current_element);
+                }
+
+                //If no element is found it means the user is trying to do up
+                //on the first element, or go down on the fast element, so let's just ignore it
+                if (typeof element == 'object') {
+                    exports.animation_running = true;
+
+                    smoothScroll.animateScroll(null, '#'+element.id, { 
+                        updateURL: true,
+                        callbackAfter : function() {
+                            exports.animation_running = false;
+                        }
+                    });
+                }
+            }
+        };
+        
+        /**
+         * Adds event listeners to mousewheel
+         * @returns {undefined}
+         */
+        var interceptMouseWheel = function () {
+            window.addEventListener('mousewheel', function(Event) {
+                if (Event.deltaY > 0) {
+                    Event.prototype.direction = 'down';
+                } else {
+                    Event.prototype.direction = 'up';
+                }
+                
+                eventHandler(Event);
+            });
+        };
+
+        /**
+         * Adds event listeners to swipe up and down
+         * @returns {undefined}
+         */
+        var interceptSwipe = function () {
+            var startY;
+            var startTime;
+            
+            window.addEventListener('touchmove', function (Event){
+                disableEvent(Event);
+            });
+            
+            window.addEventListener('touchstart', function (Event){
+                disableEvent(Event);
+                startY = Event.pageY;
+            });
+            
+            window.addEventListener('touchend', function (Event){
+                disableEvent(Event);
+                
+                //checks if the swipe was up or down, otherwise ignore it
+                //checks also if the swipe was enough quick
+                if (Event.pageY > startY && new Date().getTime() - startTime < 500) {
+                    Event.prototype.direction = 'down';
+                } else {
+                    Event.prototype.direction = 'up';
+                }
+                
+                eventHandler(Event);
+            });
+        };
+        
+        var goToFirstElement = function () {
+            if (window.location.hash.length == 0) {
+                window.location.assign(
+                    '#'+document
+                        .getElementsByClassName(settings.canvasClass)[0]
+                        .id
+                );
+            }
+        }
+        
+        exports.animation_running = false;
 
 	/**
 	 * Start/stop the scrolling animation
@@ -220,6 +348,9 @@
 			var currentLocation = root.pageYOffset;
 			if ( position == endLocation || currentLocation == endLocation || ( (root.innerHeight + currentLocation) >= documentHeight ) ) {
 				clearInterval(animationInterval);
+                                
+                                exports.animation_running = false;
+                                
 				settings.callbackAfter( toggle, anchor ); // Run callbacks after animation complete
 			}
 		};
@@ -243,6 +374,9 @@
 		 */
 		var startAnimateScroll = function () {
 			settings.callbackBefore( toggle, anchor ); // Run callbacks before animating scroll
+                        
+                        exports.animation_running = true;
+                        
 			animationInterval = setInterval(loopAnimateScroll, 16);
 		};
 
@@ -277,6 +411,12 @@
 		forEach(toggles, function (toggle) {
 			toggle.addEventListener('click', exports.animateScroll.bind( null, toggle, toggle.hash, settings ), false);
 		});
+                
+                //The "goToFirstElement" setting only takes effect when used in conjunction with "listenMouseWheel"
+                if (settings.listenMouseWheel && settings.goToFirstElement) { goToFirstElement(); }
+                
+                // Apply all the hooks to the mousewheel event and pray
+                if (settings.listenMouseWheel) { interceptMouseWheel(); }
 
 	};
 
@@ -288,3 +428,6 @@
 	return exports;
 
 });
+
+
+
