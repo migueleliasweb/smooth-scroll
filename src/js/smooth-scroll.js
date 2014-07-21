@@ -426,7 +426,7 @@
                 
                 // Apply all the hooks and pray
                 if (settings.listenMouseWheel) { interceptMouseWheel(); }
-                if (settings.listenTouchEvents) { interceptSwipe()(); }
+                if (settings.listenTouchEvents) { interceptSwipe(); }
 
 	};
 
