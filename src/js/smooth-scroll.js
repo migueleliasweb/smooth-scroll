@@ -25,6 +25,7 @@
 		offset: 0,
 		updateURL: false,
                 listenMouseWheel : false,
+                listenTouchEvents : false,
                 goToFirstElement : false,
                 canvasClass : 'canvas',
 		callbackBefore: function () {},
@@ -417,11 +418,15 @@
 			toggle.addEventListener('click', exports.animateScroll.bind( null, toggle, toggle.hash, settings ), false);
 		});
                 
-                //The "goToFirstElement" setting only takes effect when used in conjunction with "listenMouseWheel"
-                if (settings.listenMouseWheel && settings.goToFirstElement) { goToFirstElement(); }
+                //The "goToFirstElement" setting only takes effect when used 
+                //in conjunction with "listenMouseWheel" or "listenTouchEvents" 
+                if ((settings.listenMouseWheel || settings.listenTouchEvents) && settings.goToFirstElement) { 
+                    goToFirstElement();
+                }
                 
-                // Apply all the hooks to the mousewheel event and pray
+                // Apply all the hooks and pray
                 if (settings.listenMouseWheel) { interceptMouseWheel(); }
+                if (settings.listenTouchEvents) { interceptSwipe()(); }
 
 	};
 
