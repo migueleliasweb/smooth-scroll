@@ -256,9 +256,9 @@
         var interceptMouseWheel = function () {
             window.addEventListener('mousewheel', function(Event) {
                 if (Event.deltaY > 0) {
-                    Event.prototype.direction = 'down';
+                    Event.direction = 'down';
                 } else {
-                    Event.prototype.direction = 'up';
+                    Event.direction = 'up';
                 }
                 
                 eventHandler(Event);
